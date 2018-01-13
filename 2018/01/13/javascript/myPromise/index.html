@@ -94,13 +94,17 @@
 
 
 
-<meta property="og:type" content="website">
+<meta name="description" content="function MyPromise(task){     let self = this     self.state = &apos;pending&apos;     self.value = undefined     self.reason = undefined      self.onResolvedCallbacks = []     self.onRejectedCallbacks = []">
+<meta property="og:type" content="article">
 <meta property="og:title" content="Blog">
-<meta property="og:url" content="http://yoursite.com/categories/javascript/index.html">
+<meta property="og:url" content="http://yoursite.com/2018/01/13/javascript/myPromise/index.html">
 <meta property="og:site_name" content="Blog">
+<meta property="og:description" content="function MyPromise(task){     let self = this     self.state = &apos;pending&apos;     self.value = undefined     self.reason = undefined      self.onResolvedCallbacks = []     self.onRejectedCallbacks = []">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-01-13T05:14:12.557Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Blog">
+<meta name="twitter:description" content="function MyPromise(task){     let self = this     self.state = &apos;pending&apos;     self.value = undefined     self.reason = undefined      self.onResolvedCallbacks = []     self.onRejectedCallbacks = []">
 
 
 
@@ -129,13 +133,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/categories/javascript/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/01/13/javascript/myPromise/"/>
 
 
 
 
 
-  <title>分类: javascript | Blog</title>
+  <title> | Blog</title>
   
 
 
@@ -160,7 +164,7 @@
     
   
 
-  <div class="container sidebar-position-left  ">
+  <div class="container sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -254,55 +258,296 @@
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block category">
+  <div id="posts" class="posts-expand">
+    
 
-    <div id="posts" class="posts-collapse">
-      <div class="collection-title">
-        <h1>javascript<small>分类</small>
-        </h1>
-      </div>
+  
 
-      
-        
+  
+  
+  
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/13/javascript/myPromise/">
 
-      <h2 class="post-title">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="魏燃">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://avatars2.githubusercontent.com/u/23302677?s=460&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Blog">
+    </span>
+
+    
+      <header class="post-header">
+
         
-            <a class="post-title-link" href="/2018/01/11/javascript/promise/" itemprop="url">
-              
-                <span itemprop="name">promise 原理解析</span>
-              
-            </a>
         
-      </h2>
+          <h1 class="post-title" itemprop="name headline"></h1>
+        
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-01-11T00:00:00-05:00"
-              content="2018-01-11" >
-          01-11
-        </time>
-      </div>
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-13T00:13:54-05:00">
+                2018-01-13
+              </time>
+            
 
-    </header>
-  </article>
+            
 
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    </div>
+      
 
+      
+        function MyPromise(task){
+    let self = this
+    self.state = 'pending'
+    self.value = undefined
+    self.reason = undefined
+
+    self.onResolvedCallbacks = []
+    self.onRejectedCallbacks = []
+    function resolve(value){
+        if(value instanceof Promise){
+            return value.task(resolve,reject)
+        }
+        setTimeout(()=>{
+            self.state = 'fulfilled'
+            self.value = value
+            self.onResolvedCallbacks.forEach(item=>item(self.value))    
+        })
+    }
+    function reject(reason){
+        setTimeout(()=>{
+            self.state = 'rejected'
+            self.reason = reason
+            self.onRejectedCallbacks.forEach(item=>item(self.reason))
+        })
+    }
+    try{
+        task(resolve,reject)
+    }catch(error){
+        reject(error)
+    }
+}
+
+function resolvePromise(promise2,x,resolve,reject){
+    if(promise2 === x)reject(new TypeError('重复调用'))
+    let then,called
+    if(x !=null &&(typeof x === 'function' || typeof x === 'object')){
+        try {
+            then = x.then
+            if(typeof then === 'function'){
+                then.call(x,function(y){
+                    if(called)return
+                    called = true
+                    resolvePromise(promise2,y,resolve,reject)
+                },function(err){
+                    if(called)return
+                    called = true
+                    reject(err)
+                })
+            }else{
+                resolve(x)
+            }
+        } catch (error) {
+            if(called)return
+            called = true
+            reject(error)
+        }
+    }else{
+        resolve(x)
+    }
+}
+
+MyPromise.prototype.then = function(onFulFilled,onRejected){
+    onFulFilled = typeof onFulFilled === 'function'?onFulFilled:value=>value
+    onRejected = typeof onRejected === 'function'?onRejected:reason=>{throw reason}
+    let self = this
+    let promise2
+    if(self.state == 'fulfilled'){
+        promise2 = new MyPromise((resolve,reject)=>{
+            try {
+                let x = onFulFilled(self.value)
+                resolvePromise(promise2,x,resolve,reject)
+            } catch (error) {
+                reject(err)
+            }
+        })
+    }else if(self.state == 'rejected'){
+        promise2 = new MyPromise((resolve,reject)=>{
+            try {
+                let x = onRejected(self.reason)
+                resolvePromise(promise2,x,resolve,reject)
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }else if(self.state == 'pending'){
+        promise2 = new MyPromise((resolve,reject)=>{
+            self.onResolvedCallbacks.push((value)=>{
+                try {
+                    let x = onFulFilled(value)
+                    resolvePromise(promise2,x,resolve,reject)
+                } catch (error) {
+                    reject(error)
+                }
+            })
+            self.onRejectedCallbacks.push((reason)=>{
+                try {
+                    let x = onRejected(reason)
+                    resolvePromise(promise2,x,resolve,reject)
+                } catch (error) {
+                    reject(error)
+                }
+            })
+        })
+    }
+    return promise2
+}
+MyPromise.prototype.catch = function (onRejected) {
+    return this.then(null, onRejected);
+}
+MyPromise.deferred = MyPromise.defer = function () {
+    var defer = {};
+    defer.promise = new MyPromise(function (resolve, reject) {
+      defer.resolve = resolve;
+      defer.reject = reject;
+    })
+    return defer;
+  }
+MyPromise.all = function(promises){
+    return new MyPromise((resolve,reject)=>{
+        let result = []
+        let called = true
+        for(let i=0;i<promises.length;i++){ promises[i].then((value)="">{
+                result[i] = value
+                if(i=== promises.length-1 && called){
+                    resolve(result)
+                }
+            },(reason)=>{
+                called = false
+                reject(reason)
+            })
+        }
+    })
+}
+MyPromise.race = function(promises){
+    return new MyPromise((resolve,reject)=>{
+        let result = []
+        promises.forEach(promise=>{
+            promise.then((value)=>{
+                result.push(value)
+                if(result.length == 1){
+                    resolve(value)
+                }
+            },(reason)=>{
+                result.push(reason)
+                if(result.length == 1){
+                    reject(reason)
+                }
+            })
+        })
+    })
+}
+
+module.exports = MyPromise</promises.length;i++){>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/11/javascript/promise/" rel="next" title="promise 原理解析">
+                <i class="fa fa-chevron-left"></i> promise 原理解析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/01/13/javascript/example/" rel="prev" title="">
+                 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
 
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -310,6 +555,10 @@
 
 
           
+  <div class="comments" id="comments">
+    
+  </div>
+
 
         </div>
         
@@ -506,10 +755,10 @@
   
 
   
-    <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
 <script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
 
-  
+
 
   
 
