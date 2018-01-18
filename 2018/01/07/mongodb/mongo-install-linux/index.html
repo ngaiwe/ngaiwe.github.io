@@ -102,12 +102,12 @@
 <meta property="og:site_name" content="Blog">
 <meta property="og:description" content="如何在阿里云服务器Linux环境下安装mongodb，使用mongohub视图工具操作官网下载安装包,选择版本按照服务器版本选择，这里选择Ubuntu16.04版本https://www.mongodb.com/download-center#community 将下载好的压缩包传到服务器上,在mac电脑因为是linux环境 所以用scp传输 Downloads是本机mongodb压缩包地址，Ip">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/2018/01/07/mongodb/mongo-install-linux/images/mongohub.png">
+<meta property="og:image" content="http://yoursite.com/2018/01/07/mongodb/mongo-install-linux/mongohub.png">
 <meta property="og:updated_time" content="2018-01-11T21:18:36.477Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="mongodb 云端Linux安装">
 <meta name="twitter:description" content="如何在阿里云服务器Linux环境下安装mongodb，使用mongohub视图工具操作官网下载安装包,选择版本按照服务器版本选择，这里选择Ubuntu16.04版本https://www.mongodb.com/download-center#community 将下载好的压缩包传到服务器上,在mac电脑因为是linux环境 所以用scp传输 Downloads是本机mongodb压缩包地址，Ip">
-<meta name="twitter:image" content="http://yoursite.com/2018/01/07/mongodb/mongo-install-linux/images/mongohub.png">
+<meta name="twitter:image" content="http://yoursite.com/2018/01/07/mongodb/mongo-install-linux/mongohub.png">
 
 
 
@@ -373,7 +373,7 @@
 <h3 id="在mongodb跟目录在创建etc配置文件夹"><a href="#在mongodb跟目录在创建etc配置文件夹" class="headerlink" title="在mongodb跟目录在创建etc配置文件夹"></a>在mongodb跟目录在创建etc配置文件夹</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir etc</span><br></pre></td></tr></table></figure>
 <h3 id="在etc中创建配置文件mongo-conf"><a href="#在etc中创建配置文件mongo-conf" class="headerlink" title="在etc中创建配置文件mongo.conf"></a>在etc中创建配置文件mongo.conf</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">dbpath=/mongodb/data/</span><br><span class="line">logpath=/mongodb/logs/mongodb.log</span><br><span class="line">logappend=<span class="literal">true</span> //代表日志追加 不会覆盖</span><br><span class="line">quiet=<span class="literal">true</span> //默认是<span class="literal">true</span>表示在调试时会过滤日志，如果不想在调试时过滤日志可<span class="literal">false</span></span><br><span class="line">port=27017 //指定端口</span><br></pre></td></tr></table></figure>
 <h3 id="切换目录到mongodb-gt-mongo安装文件夹-gt-bin目录-指定mongo配置指向，并启动mongod"><a href="#切换目录到mongodb-gt-mongo安装文件夹-gt-bin目录-指定mongo配置指向，并启动mongod" class="headerlink" title="切换目录到mongodb-&gt;mongo安装文件夹-&gt;bin目录 指定mongo配置指向，并启动mongod"></a>切换目录到mongodb-&gt;mongo安装文件夹-&gt;bin目录 指定mongo配置指向，并启动mongod</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mongod -f /mongodb/etc/mongo.conf</span><br></pre></td></tr></table></figure>
-<h3 id="服务器防火墙添加27017端口规则"><a href="#服务器防火墙添加27017端口规则" class="headerlink" title="服务器防火墙添加27017端口规则"></a>服务器防火墙添加27017端口规则</h3><h3 id="在mac中打开mongohub视图工具，添加数据库，按需求是否设置过集合用户名密码，没有则不填写，选择服务器创建的Database或者为空代表整个mongodb数据库"><a href="#在mac中打开mongohub视图工具，添加数据库，按需求是否设置过集合用户名密码，没有则不填写，选择服务器创建的Database或者为空代表整个mongodb数据库" class="headerlink" title="在mac中打开mongohub视图工具，添加数据库，按需求是否设置过集合用户名密码，没有则不填写，选择服务器创建的Database或者为空代表整个mongodb数据库"></a>在mac中打开mongohub视图工具，添加数据库，按需求是否设置过集合用户名密码，没有则不填写，选择服务器创建的Database或者为空代表整个mongodb数据库</h3><p><img src="./images/mongohub.png" alt=""></p>
+<h3 id="服务器防火墙添加27017端口规则"><a href="#服务器防火墙添加27017端口规则" class="headerlink" title="服务器防火墙添加27017端口规则"></a>服务器防火墙添加27017端口规则</h3><h3 id="在mac中打开mongohub视图工具，添加数据库，按需求是否设置过集合用户名密码，没有则不填写，选择服务器创建的Database或者为空代表整个mongodb数据库"><a href="#在mac中打开mongohub视图工具，添加数据库，按需求是否设置过集合用户名密码，没有则不填写，选择服务器创建的Database或者为空代表整个mongodb数据库" class="headerlink" title="在mac中打开mongohub视图工具，添加数据库，按需求是否设置过集合用户名密码，没有则不填写，选择服务器创建的Database或者为空代表整个mongodb数据库"></a>在mac中打开mongohub视图工具，添加数据库，按需求是否设置过集合用户名密码，没有则不填写，选择服务器创建的Database或者为空代表整个mongodb数据库</h3><p><img src="/2018/01/07/mongodb/mongo-install-linux/mongohub.png" alt=""></p>
 
       
     </div>
