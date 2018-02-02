@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="node,stream,fs,Readable,Writable,Duplex,Transform," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="node stream源码分析 — Readablestream简述stream分为四种，如下： stream.Readable — 输入流 stream.Writable — 输出流 stream.Duplex — 双工流 stream.Transform — 转换流  流拥有两种模式 二进制模式，以Buffer、String、Uint8Array 对象模式，流的内部是对象形式  输入流（str">
+<meta name="keywords" content="node,stream,fs,Readable,Writable,Duplex,Transform">
+<meta property="og:type" content="article">
+<meta property="og:title" content="node stream源码分析 — Readable">
+<meta property="og:url" content="http://yoursite.com/2018/02/02/nodejs/stream-Readable/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="node stream源码分析 — Readablestream简述stream分为四种，如下： stream.Readable — 输入流 stream.Writable — 输出流 stream.Duplex — 双工流 stream.Transform — 转换流  流拥有两种模式 二进制模式，以Buffer、String、Uint8Array 对象模式，流的内部是对象形式  输入流（str">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-02-02T15:46:01.410Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="node stream源码分析 — Readable">
+<meta name="twitter:description" content="node stream源码分析 — Readablestream简述stream分为四种，如下： stream.Readable — 输入流 stream.Writable — 输出流 stream.Duplex — 双工流 stream.Transform — 转换流  流拥有两种模式 二进制模式，以Buffer、String、Uint8Array 对象模式，流的内部是对象形式  输入流（str">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/02/02/nodejs/stream-Readable/"/>
+
+
+
+
+
+  <title>node stream源码分析 — Readable | Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/02/nodejs/stream-Readable/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="魏燃">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://avatars2.githubusercontent.com/u/23302677?s=460&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">node stream源码分析 — Readable</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-02T00:00:00+08:00">
+                2018-02-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/nodejs/" itemprop="url" rel="index">
+                    <span itemprop="name">nodejs</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="node-stream源码分析-—-Readable"><a href="#node-stream源码分析-—-Readable" class="headerlink" title="node stream源码分析 — Readable"></a>node stream源码分析 — Readable</h1><h2 id="stream简述"><a href="#stream简述" class="headerlink" title="stream简述"></a>stream简述</h2><h3 id="stream分为四种，如下："><a href="#stream分为四种，如下：" class="headerlink" title="stream分为四种，如下："></a>stream分为四种，如下：</h3><ul>
+<li>stream.Readable — 输入流</li>
+<li>stream.Writable — 输出流</li>
+<li>stream.Duplex — 双工流</li>
+<li>stream.Transform — 转换流</li>
+</ul>
+<h3 id="流拥有两种模式"><a href="#流拥有两种模式" class="headerlink" title="流拥有两种模式"></a>流拥有两种模式</h3><ul>
+<li>二进制模式，以Buffer、String、Uint8Array</li>
+<li>对象模式，流的内部是对象形式</li>
+</ul>
+<h3 id="输入流（stream-Readable）"><a href="#输入流（stream-Readable）" class="headerlink" title="输入流（stream.Readable）"></a>输入流（stream.Readable）</h3><blockquote>
+<p>输入流有两种模式，一种是流动模式，另一种是非流动模式</p>
+<p>非流动模式就是监听data方法，直接读取read不暂停，不存到缓存区</p>
+<p>流动模式就是监听readable方法，就是讲读取内容放到缓存区内，等待writable调用，在判断是否有空位，在取消暂停</p>
+</blockquote>
+<h4 id="Readable源码分析"><a href="#Readable源码分析" class="headerlink" title="Readable源码分析"></a>Readable源码分析</h4><blockquote>
+<p>首先看下面Readable的源码，对照Readable源码再看stream做了哪些操作</p>
+<p>_stream_readable.js文件</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br></pre></td><td class="code"><pre><span class="line">// 首先监听data或者readable的时候，进入Readable.prototype.on —— 778行</span><br><span class="line">Readable.prototype.on = <span class="keyword">function</span>(ev, fn) &#123;//传进来一个ev代表监听参数，fn回调函数</span><br><span class="line">  const res = Stream.prototype.on.call(this, ev, fn);//继承Stream的on方法，传入ev，fn</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (ev === <span class="string">'data'</span>) &#123;//监听data</span><br><span class="line">    // Start flowing on next tick <span class="keyword">if</span> stream isn<span class="string">'t explicitly paused</span></span><br><span class="line"><span class="string">    if (this._readableState.flowing !== false)//flowing 是在Readable函数中定义看下面Readable函数，不等于false代表流动模式</span></span><br><span class="line"><span class="string">      this.resume();// 开始读取</span></span><br><span class="line"><span class="string">  &#125; else if (ev === '</span>readable<span class="string">') &#123;//监听readable</span></span><br><span class="line"><span class="string">    const state = this._readableState;//设置state常量为_readableState，具体看下面Readable函数</span></span><br><span class="line"><span class="string">    if (!state.endEmitted &amp;&amp; !state.readableListening) &#123;//如果ended没有触发或者不为流动模式，则readableListening，needReadable为true让其成为流动模式，并且需要Readable，不触发Readable</span></span><br><span class="line"><span class="string">      state.readableListening = state.needReadable = true;</span></span><br><span class="line"><span class="string">      state.emittedReadable = false;</span></span><br><span class="line"><span class="string">      if (!state.reading) &#123;//如果没有正在读取，则下一个事件环调用nReadingNextTick，见下代码</span></span><br><span class="line"><span class="string">        process.nextTick(nReadingNextTick, this);</span></span><br><span class="line"><span class="string">      &#125; else if (state.length) &#123;//如果缓存区长度存在，则执行emitReadable，代码见下</span></span><br><span class="line"><span class="string">        emitReadable(this);</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  return res;//返回res</span></span><br><span class="line"><span class="string">&#125;;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">// Readable函数 —— 141行</span></span><br><span class="line"><span class="string">function Readable(options) &#123;//将createReadStream中的options传入</span></span><br><span class="line"><span class="string">  if (!(this instanceof Readable))//判断有没有new Readable()</span></span><br><span class="line"><span class="string">    return new Readable(options);</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  this._readableState = new ReadableState(options, this);//设置ReadableState实例，命名为this._readableState，具体ReadableState构造函数看下方ReadableState函数函数</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  // legacy</span></span><br><span class="line"><span class="string">  this.readable = true;//、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  if (options) &#123;//判断参数是否存在</span></span><br><span class="line"><span class="string">    if (typeof options.read === '</span><span class="keyword">function</span><span class="string">')//判断是否调用的new Readable</span></span><br><span class="line"><span class="string">      this._read = options.read;//让函数内部_read方法指向read方法</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    if (typeof options.destroy === '</span><span class="keyword">function</span><span class="string">')</span></span><br><span class="line"><span class="string">      this._destroy = options.destroy;//让函数内部_destroy方法指向destroy方法</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  Stream.call(this);//options不存在，继承Stream</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">// ReadableState函数 —— 59行</span></span><br><span class="line"><span class="string">function ReadableState(options, stream) &#123;//接收options和Readable上下文</span></span><br><span class="line"><span class="string">  options = options || &#123;&#125;;//options为空则命options为空对象</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  // Duplex streams are both readable and writable, but share</span></span><br><span class="line"><span class="string">  // the same options object.</span></span><br><span class="line"><span class="string">  // However, some cases require setting options to different</span></span><br><span class="line"><span class="string">  // values for the readable and the writable sides of the duplex stream.</span></span><br><span class="line"><span class="string">  // These options can be provided separately as readableXXX and writableXXX.</span></span><br><span class="line"><span class="string">  var isDuplex = stream instanceof Stream.Duplex;//用来判断是否是双工流</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  // object stream flag. Used to make read(n) ignore n and to</span></span><br><span class="line"><span class="string">  // make all the buffer merging and length checks go away</span></span><br><span class="line"><span class="string">  this.objectMode = !!options.objectMode;//对象流的标识，如果是对象流忽视read中的n参数</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  if (isDuplex)//同this.objectMode用法一样</span></span><br><span class="line"><span class="string">    this.objectMode = this.objectMode || !!options.readableObjectMode;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  // the point at which it stops calling _read() to fill the buffer</span></span><br><span class="line"><span class="string">  // Note: 0 is a valid value, means "don'</span>t call _read preemptively ever<span class="string">"</span></span><br><span class="line"><span class="string">  var hwm = options.highWaterMark;//获取传入highWaterMark值</span></span><br><span class="line"><span class="string">  var readableHwm = options.readableHighWaterMark;//设置可读流highWaterMark</span></span><br><span class="line"><span class="string">  var defaultHwm = this.objectMode ? 16 : 16 * 1024;//默认的highWaterMark</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  if (hwm || hwm === 0)</span></span><br><span class="line"><span class="string">    this.highWaterMark = hwm;//如果参数highWaterMark存在或者为0数值则设置此构造函数属性highWaterMark</span></span><br><span class="line"><span class="string">  else if (isDuplex &amp;&amp; (readableHwm || readableHwm === 0))</span></span><br><span class="line"><span class="string">    this.highWaterMark = readableHwm;//如果是双工流并且可读流highWaterMark存在则设置此构造函数属性highWaterMark</span></span><br><span class="line"><span class="string">  else</span></span><br><span class="line"><span class="string">    this.highWaterMark = defaultHwm;//否则this.highWaterMark为默认值</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  // cast to ints.</span></span><br><span class="line"><span class="string">  this.highWaterMark = Math.floor(this.highWaterMark);//向下取整</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  // A linked list is used to store data chunks instead of an array because the</span></span><br><span class="line"><span class="string">  // linked list can remove elements from the beginning faster than</span></span><br><span class="line"><span class="string">  // array.shift()</span></span><br><span class="line"><span class="string">  this.buffer = new BufferList();//设置缓存区大小，采用BufferList,链式结构</span></span><br><span class="line"><span class="string">  this.length = 0;//设置缓存区长度</span></span><br><span class="line"><span class="string">  this.pipes = null;//下一个管道是否存在</span></span><br><span class="line"><span class="string">  this.pipesCount = 0;//设置管道数量</span></span><br><span class="line"><span class="string">  this.flowing = null;//设置是否为流动或非流动模式</span></span><br><span class="line"><span class="string">  this.ended = false;//Readable状态标识，true表示数据读取完毕</span></span><br><span class="line"><span class="string">  this.endEmitted = false;//Readable状态标识，为true表示ended已经触发</span></span><br><span class="line"><span class="string">  this.reading = false;//表示正在调用_read</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  // a flag to be able to tell if the event 'readable'/'data' is emitted</span></span><br><span class="line"><span class="string">  // immediately, or on a later tick.  We set this to true at first, because</span></span><br><span class="line"><span class="string">  // any actions that shouldn't happen until "</span>later<span class="string">" should generally also</span></span><br><span class="line"><span class="string">  // not happen before the first read call.</span></span><br><span class="line"><span class="string">  this.sync = true;//让emitReadable是在这个事件环还是下个事件环触发</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  // whenever we return null, then we set a flag to say</span></span><br><span class="line"><span class="string">  // that we're awaiting a 'readable' event emission.</span></span><br><span class="line"><span class="string">  this.needReadable = false;//是否需要Readable事件触发</span></span><br><span class="line"><span class="string">  this.emittedReadable = false;//触发Readable事件</span></span><br><span class="line"><span class="string">  this.readableListening = false;//是否准备切换流动模式</span></span><br><span class="line"><span class="string">  this.resumeScheduled = false;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  // has it been destroyed</span></span><br><span class="line"><span class="string">  this.destroyed = false;//是否已经关闭</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  // Crypto is kind of old and crusty.  Historically, its default string</span></span><br><span class="line"><span class="string">  // encoding is 'binary' so we have to make this configurable.</span></span><br><span class="line"><span class="string">  // Everything else in the universe uses 'utf8', though.</span></span><br><span class="line"><span class="string">  this.defaultEncoding = options.defaultEncoding || 'utf8';//设置Encoding</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  // the number of writers that are awaiting a drain event in .pipe()s</span></span><br><span class="line"><span class="string">  this.awaitDrain = 0;//在pipe中等待下一个管道触发的数量</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  // if true, a maybeReadMore has been scheduled</span></span><br><span class="line"><span class="string">  this.readingMore = false;//readable读取没达到最高水位线是否需要读取更多，知道缓存区满</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  //编码转换，解决乱码问题</span></span><br><span class="line"><span class="string">  this.decoder = null;//解码器</span></span><br><span class="line"><span class="string">  this.encoding = null;//编码</span></span><br><span class="line"><span class="string">  if (options.encoding) &#123;</span></span><br><span class="line"><span class="string">    if (!StringDecoder)</span></span><br><span class="line"><span class="string">      StringDecoder = require('string_decoder').StringDecoder;</span></span><br><span class="line"><span class="string">    this.decoder = new StringDecoder(options.encoding);</span></span><br><span class="line"><span class="string">    this.encoding = options.encoding;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>下面是createReadStream创建读取流的源码  ————————  fs.js文件</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br></pre></td><td class="code"><pre><span class="line">//fs.createReadStream —— 1977行</span><br><span class="line">fs.createReadStream = <span class="keyword">function</span>(path, options) &#123;</span><br><span class="line">  <span class="built_in">return</span> new ReadStream(path, options);//首先返回ReadStream构造函数实例</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">util.inherits(ReadStream, Readable);//继承Readable</span><br><span class="line">fs.ReadStream = ReadStream;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> ReadStream(path, options) &#123;//传入文件路径，options参数</span><br><span class="line">  <span class="keyword">if</span> (!(this instanceof ReadStream))//判断有没有new ReadStream()</span><br><span class="line">    <span class="built_in">return</span> new ReadStream(path, options);</span><br><span class="line"></span><br><span class="line">  // a little bit bigger buffer and water marks by default</span><br><span class="line">  options = copyObject(getOptions(options, &#123;&#125;));//getOptions、copyObject函数源码如下</span><br><span class="line">  <span class="keyword">if</span> (options.highWaterMark === undefined)</span><br><span class="line">    options.highWaterMark = 64 * 1024;//设置默认highWaterMark</span><br><span class="line"></span><br><span class="line">  Readable.call(this, options);//继承Readable，并且将options传入</span><br><span class="line"></span><br><span class="line">  handleError((this.path = getPathFromURL(path)));</span><br><span class="line">  this.fd = options.fd === undefined ? null : options.fd;//设置文件描述符</span><br><span class="line">  this.flags = options.flags === undefined ? <span class="string">'r'</span> : options.flags;//设置标识符是读取操作</span><br><span class="line">  this.mode = options.mode === undefined ? 0o666 : options.mode;//设置权限，默认0o666</span><br><span class="line"></span><br><span class="line">  this.start = options.start;//设置读取开始位置</span><br><span class="line">  this.end = options.end;//设置读取结束位置</span><br><span class="line">  this.autoClose = options.autoClose === undefined ? <span class="literal">true</span> : options.autoClose;//设置是否自动关闭</span><br><span class="line">  this.pos = undefined;//读取初始值</span><br><span class="line">  this.bytesRead = 0;//读取数量</span><br><span class="line">  this.closed = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (this.start !== undefined) &#123;</span><br><span class="line">    <span class="keyword">if</span> (typeof this.start !== <span class="string">'number'</span>) &#123;//判断读取开始位置如果不是数值报错</span><br><span class="line">      throw new errors.TypeError(<span class="string">'ERR_INVALID_ARG_TYPE'</span>,</span><br><span class="line">                                 <span class="string">'start'</span>,</span><br><span class="line">                                 <span class="string">'number'</span>,</span><br><span class="line">                                 this.start);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (this.end === undefined) &#123;</span><br><span class="line">      this.end = Infinity;//如果没有设置end，则无穷大</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (typeof this.end !== <span class="string">'number'</span>) &#123;//读取截至位置不是数值，报错</span><br><span class="line">      throw new errors.TypeError(<span class="string">'ERR_INVALID_ARG_TYPE'</span>,</span><br><span class="line">                                 <span class="string">'end'</span>,</span><br><span class="line">                                 <span class="string">'number'</span>,</span><br><span class="line">                                 this.end);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (this.start &gt; this.end) &#123;//如果读取开始位置大于读取结束位置，报错</span><br><span class="line">      const errVal = `&#123;start: <span class="variable">$&#123;this.start&#125;</span>, end: <span class="variable">$&#123;this.end&#125;</span>&#125;`;</span><br><span class="line">      throw new errors.RangeError(<span class="string">'ERR_VALUE_OUT_OF_RANGE'</span>,</span><br><span class="line">                                  <span class="string">'start'</span>,</span><br><span class="line">                                  <span class="string">'&lt;= "end"'</span>,</span><br><span class="line">                                  errVal);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    this.pos = this.start;//让那个pos为读取开始位置判断后的正确结果</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (typeof this.fd !== <span class="string">'number'</span>)</span><br><span class="line">    this.open();//如果fd不存在，说明文件没有打开，则调用打开方法,见下面open方法</span><br><span class="line"></span><br><span class="line">  this.on(<span class="string">'end'</span>, <span class="function"><span class="title">function</span></span>() &#123;//监听end，如果触发end监听，判断为自动关闭为<span class="literal">true</span>则调用关闭函数destroy</span><br><span class="line">    <span class="keyword">if</span> (this.autoClose) &#123;</span><br><span class="line">      this.destroy();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//getOptions函数 —— 76行</span><br><span class="line"><span class="keyword">function</span> getOptions(options, defaultOptions) &#123;//传入options和空对象默认值</span><br><span class="line">  <span class="keyword">if</span> (options === null || options === undefined ||</span><br><span class="line">      typeof options === <span class="string">'function'</span>) &#123;//判断options不存在，或者是函数类型，返回给copyObject函数为空对象</span><br><span class="line">    <span class="built_in">return</span> defaultOptions;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (typeof options === <span class="string">'string'</span>) &#123;</span><br><span class="line">  	//如果是options是字符串，defaultOptions的encoding为options，options为defaultOptions对象</span><br><span class="line">    defaultOptions = util._extend(&#123;&#125;, defaultOptions);</span><br><span class="line">    defaultOptions.encoding = options;</span><br><span class="line">    options = defaultOptions;</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (typeof options !== <span class="string">'object'</span>) &#123;</span><br><span class="line">  //如果options为对象，则报错</span><br><span class="line">    throw new errors.TypeError(<span class="string">'ERR_INVALID_ARG_TYPE'</span>,</span><br><span class="line">                               <span class="string">'options'</span>,</span><br><span class="line">                               [<span class="string">'string'</span>, <span class="string">'Object'</span>],</span><br><span class="line">                               options);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (options.encoding !== <span class="string">'buffer'</span>)</span><br><span class="line">  	如果options.encoding 不是buffer，则转换</span><br><span class="line">    assertEncoding(options.encoding);</span><br><span class="line">  <span class="built_in">return</span> options;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//copyObject函数 —— 98行</span><br><span class="line"><span class="keyword">function</span> copyObject(<span class="built_in">source</span>) &#123;</span><br><span class="line">  var target = &#123;&#125;;</span><br><span class="line">  <span class="keyword">for</span> (var key <span class="keyword">in</span> <span class="built_in">source</span>)</span><br><span class="line">  	//遍历getOptions的返回值options</span><br><span class="line">    target[key] = <span class="built_in">source</span>[key];</span><br><span class="line">  <span class="built_in">return</span> target;//返回一个新对象</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//open方法 —— 2046行</span><br><span class="line">ReadStream.prototype.open = <span class="function"><span class="title">function</span></span>() &#123;</span><br><span class="line">  var self = this;//定义this</span><br><span class="line">  fs.open(this.path, this.flags, this.mode, <span class="keyword">function</span>(er, fd) &#123;//node fs.open API</span><br><span class="line">    <span class="keyword">if</span> (er) &#123;</span><br><span class="line">      <span class="keyword">if</span> (self.autoClose) &#123;//如果报错并且自动关闭为<span class="literal">true</span>，则调用关闭方法</span><br><span class="line">        self.destroy();</span><br><span class="line">      &#125;</span><br><span class="line">      self.emit(<span class="string">'error'</span>, er);//触发error，外部监听</span><br><span class="line">      <span class="built_in">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    self.fd = fd;//打开成功，定义this.fd</span><br><span class="line">    self.emit(<span class="string">'open'</span>, fd);//触发open监听，传入fd</span><br><span class="line">    // start the flow of data.</span><br><span class="line">    self.read();//开始流动模式，调用父类Readable <span class="built_in">read</span>()方法，见下</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Readable ————  _stream_readable.js文件</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br></pre></td><td class="code"><pre><span class="line">//Readable <span class="built_in">read</span>方法 —— 372行</span><br><span class="line">Readable.prototype.read = <span class="keyword">function</span>(n) &#123;</span><br><span class="line">  debug(<span class="string">'read'</span>, n);//debug</span><br><span class="line">  n = parseInt(n, 10);//n转为10进制取整</span><br><span class="line">  var state = this._readableState;//就是new ReadableState的实例，看上面Readable源码</span><br><span class="line">  var nOrig = n;//声明变量nOrig为传入的n</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (n !== 0)</span><br><span class="line">    state.emittedReadable = <span class="literal">false</span>;//如果n不为0，则让触发Readable为<span class="literal">false</span></span><br><span class="line"></span><br><span class="line">  // <span class="keyword">if</span> we<span class="string">'re doing read(0) to trigger a readable event, but we</span></span><br><span class="line"><span class="string">  // already have a bunch of data in the buffer, then just trigger</span></span><br><span class="line"><span class="string">  // the '</span>readable<span class="string">' event and move on.</span></span><br><span class="line"><span class="string">  if (n === 0 &amp;&amp;</span></span><br><span class="line"><span class="string">      state.needReadable &amp;&amp;</span></span><br><span class="line"><span class="string">      (state.length &gt;= state.highWaterMark || state.ended)) &#123;</span></span><br><span class="line"><span class="string">      //如果n为0并且需要Readable并且，缓存区长度大于等于highWaterMark，则debuglog</span></span><br><span class="line"><span class="string">    debug('</span><span class="built_in">read</span>: emitReadable<span class="string">', state.length, state.ended);</span></span><br><span class="line"><span class="string">    if (state.length === 0 &amp;&amp; state.ended)</span></span><br><span class="line"><span class="string">      endReadable(this);//如果缓存区长度为0并且读取完毕，则触发endReadable函数，如下</span></span><br><span class="line"><span class="string">    else</span></span><br><span class="line"><span class="string">      emitReadable(this);//否则触发emitReadable ，如下</span></span><br><span class="line"><span class="string">    return null;//最后返回null</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  n = howMuchToRead(n, state);//执行howMuchToRead，如下</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  // if we'</span>ve ended, and we<span class="string">'re now clear, then finish it up.</span></span><br><span class="line"><span class="string">  if (n === 0 &amp;&amp; state.ended) &#123;//如果n为0并且读取结束</span></span><br><span class="line"><span class="string">    if (state.length === 0)//如果缓存区长度为0，则执行endReadable，如下</span></span><br><span class="line"><span class="string">      endReadable(this);</span></span><br><span class="line"><span class="string">    return null;//返回null</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  // All the actual chunk generation logic needs to be</span></span><br><span class="line"><span class="string">  // *below* the call to _read.  The reason is that in certain</span></span><br><span class="line"><span class="string">  // synthetic stream cases, such as passthrough streams, _read</span></span><br><span class="line"><span class="string">  // may be a completely synchronous operation which may change</span></span><br><span class="line"><span class="string">  // the state of the read buffer, providing enough data when</span></span><br><span class="line"><span class="string">  // before there was *not* enough.</span></span><br><span class="line"><span class="string">  //</span></span><br><span class="line"><span class="string">  // So, the steps are:</span></span><br><span class="line"><span class="string">  // 1. Figure out what the state of things will be after we do</span></span><br><span class="line"><span class="string">  // a read from the buffer.</span></span><br><span class="line"><span class="string">  //</span></span><br><span class="line"><span class="string">  // 2. If that resulting state will trigger a _read, then call _read.</span></span><br><span class="line"><span class="string">  // Note that this may be asynchronous, or synchronous.  Yes, it is</span></span><br><span class="line"><span class="string">  // deeply ugly to write APIs this way, but that still doesn'</span>t mean</span><br><span class="line">  // that the Readable class should behave improperly, as streams are</span><br><span class="line">  // designed to be sync/async agnostic.</span><br><span class="line">  // Take note <span class="keyword">if</span> the _read call is sync or async (ie, <span class="keyword">if</span> the <span class="built_in">read</span> call</span><br><span class="line">  // has returned yet), so that we know whether or not it<span class="string">'s safe to emit</span></span><br><span class="line"><span class="string">  // '</span>readable<span class="string">' etc.</span></span><br><span class="line"><span class="string">  //</span></span><br><span class="line"><span class="string">  // 3. Actually pull the requested chunks out of the buffer and return.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  // if we need a readable event, then we need to do some reading.</span></span><br><span class="line"><span class="string">  var doRead = state.needReadable;//命名doRead为是否需要Readable</span></span><br><span class="line"><span class="string">  debug('</span>need readable<span class="string">', doRead);//debuglog</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  // if we currently have less than the highWaterMark, then also read some</span></span><br><span class="line"><span class="string">  if (state.length === 0 || state.length - n &lt; state.highWaterMark) &#123;</span></span><br><span class="line"><span class="string">    doRead = true;//如果缓存区长度为0，或者缓存区长度减去n小于highWaterMark，则需要Readable</span></span><br><span class="line"><span class="string">    debug('</span>length less than watermark<span class="string">', doRead);</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  // however, if we'</span>ve ended, <span class="keyword">then</span> there<span class="string">'s no point, and if we'</span>re already</span><br><span class="line">  // reading, <span class="keyword">then</span> it<span class="string">'s unnecessary.</span></span><br><span class="line"><span class="string">  if (state.ended || state.reading) &#123;</span></span><br><span class="line"><span class="string">    doRead = false;//如果读取结束，或者正在读取，则不需要Readable</span></span><br><span class="line"><span class="string">    debug('</span>reading or ended<span class="string">', doRead);</span></span><br><span class="line"><span class="string">  &#125; else if (doRead) &#123;</span></span><br><span class="line"><span class="string">    debug('</span><span class="keyword">do</span> <span class="built_in">read</span><span class="string">');</span></span><br><span class="line"><span class="string">    state.reading = true;//如果需要Readable，则正在读取</span></span><br><span class="line"><span class="string">    state.sync = true;//让emitReadable在下个事件环执行</span></span><br><span class="line"><span class="string">    // if the length is currently zero, then we *need* a readable event.</span></span><br><span class="line"><span class="string">    if (state.length === 0)//如果缓存区长度为0，则需要Readable</span></span><br><span class="line"><span class="string">      state.needReadable = true;</span></span><br><span class="line"><span class="string">    // call internal read method</span></span><br><span class="line"><span class="string">    this._read(state.highWaterMark);//然后调用子集方法_read，代码如下</span></span><br><span class="line"><span class="string">    state.sync = false;//让emitReadable在本次事件环</span></span><br><span class="line"><span class="string">    // If _read pushed data synchronously, then `reading` will be false,</span></span><br><span class="line"><span class="string">    // and we need to re-evaluate how much data we can return to the user.</span></span><br><span class="line"><span class="string">    if (!state.reading)//如果没有正在读取，则n等于howMuchToRead</span></span><br><span class="line"><span class="string">      n = howMuchToRead(nOrig, state);</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  var ret;</span></span><br><span class="line"><span class="string">  if (n &gt; 0)</span></span><br><span class="line"><span class="string">    ret = fromList(n, state);//如果n大于0，则</span></span><br><span class="line"><span class="string">  else</span></span><br><span class="line"><span class="string">    ret = null;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  if (ret === null) &#123;</span></span><br><span class="line"><span class="string">    state.needReadable = true;//如果ret为null，则需要Readable</span></span><br><span class="line"><span class="string">    n = 0;</span></span><br><span class="line"><span class="string">  &#125; else &#123;</span></span><br><span class="line"><span class="string">    state.length -= n;//缓存区减去n</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  if (state.length === 0) &#123;//如果缓存区长度为0</span></span><br><span class="line"><span class="string">    // If we have nothing in the buffer, then we want to know</span></span><br><span class="line"><span class="string">    // as soon as we *do* get something into the buffer.</span></span><br><span class="line"><span class="string">    if (!state.ended)//如果没有读取结束，则需要Readable</span></span><br><span class="line"><span class="string">      state.needReadable = true;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    // If we tried to read() past the EOF, then emit end on the next tick.</span></span><br><span class="line"><span class="string">    if (nOrig !== n &amp;&amp; state.ended)//如果nOrig不等于n或者读取结束，则调用endReadable，看endReadable代码</span></span><br><span class="line"><span class="string">      endReadable(this);</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  if (ret !== null)//如果ret不等于null，则触发data，流动模式，返回ret</span></span><br><span class="line"><span class="string">    this.emit('</span>data<span class="string">', ret);</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  return ret;</span></span><br><span class="line"><span class="string">&#125;;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">// endReadable —— 1087行</span></span><br><span class="line"><span class="string">function endReadable(stream) &#123;</span></span><br><span class="line"><span class="string">  var state = stream._readableState;//state赋值为new ReadableState实例</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  if (!state.endEmitted) &#123;//如果ended没有触发</span></span><br><span class="line"><span class="string">    state.ended = true;//让ended为true，读取完状态</span></span><br><span class="line"><span class="string">    process.nextTick(endReadableNT, state, stream);//下一个微观队列调用endReadableNT</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">function endReadableNT(state, stream) &#123;</span></span><br><span class="line"><span class="string">  // Check that we didn'</span>t get one last unshift.</span><br><span class="line">  <span class="keyword">if</span> (!state.endEmitted &amp;&amp; state.length === 0) &#123;//如果ended没有触发并且缓存区长度为0</span><br><span class="line">    state.endEmitted = <span class="literal">true</span>;//让endEmitted为<span class="literal">true</span>表示ended已经触发</span><br><span class="line">    stream.readable = <span class="literal">false</span>;//readable为<span class="literal">false</span></span><br><span class="line">    stream.emit(<span class="string">'end'</span>);//触发end监听</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//emitReadable —— 505</span><br><span class="line"><span class="keyword">function</span> emitReadable(stream) &#123;</span><br><span class="line">  var state = stream._readableState;//state赋值为new ReadableState实例</span><br><span class="line">  state.needReadable = <span class="literal">false</span>;//设置不需要readable</span><br><span class="line">  <span class="keyword">if</span> (!state.emittedReadable) &#123;//不触发readable事件</span><br><span class="line">    debug(<span class="string">'emitReadable'</span>, state.flowing);//debuglog</span><br><span class="line">    state.emittedReadable = <span class="literal">true</span>;//让那emittedReadable为<span class="literal">true</span>，表示触发readable</span><br><span class="line">    <span class="keyword">if</span> (state.sync)//sync为<span class="literal">true</span>，让emitReadable_为下个事件环(微观队列)</span><br><span class="line">      process.nextTick(emitReadable_, stream);</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">      emitReadable_(stream);//否则直接触发emitReadable_</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> emitReadable_(stream) &#123;</span><br><span class="line">  debug(<span class="string">'emit readable'</span>);//debuglog</span><br><span class="line">  stream.emit(<span class="string">'readable'</span>);//触发readable监听</span><br><span class="line">  flow(stream);//执行flow</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">function</span> flow(stream) &#123;</span><br><span class="line">  const state = stream._readableState;//state赋值为new ReadableState实例</span><br><span class="line">  debug(<span class="string">'flow'</span>, state.flowing);//debuglog</span><br><span class="line">  <span class="keyword">while</span> (state.flowing &amp;&amp; stream.read() !== null);//flowing为<span class="literal">true</span>流动模式并且<span class="built_in">read</span>()不为null，循环<span class="built_in">read</span>()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//howMuchToRead —— 346行</span><br><span class="line"><span class="keyword">function</span> howMuchToRead(n, state) &#123;</span><br><span class="line">  <span class="keyword">if</span> (n &lt;= 0 || (state.length === 0 &amp;&amp; state.ended))</span><br><span class="line">    <span class="built_in">return</span> 0;//如果n小于等于0或者缓存区长度为0并且已经结束，则返回0</span><br><span class="line">  <span class="keyword">if</span> (state.objectMode)</span><br><span class="line">    <span class="built_in">return</span> 1;//如果处理的是对象流，返回1</span><br><span class="line">  <span class="keyword">if</span> (n !== n) &#123;</span><br><span class="line">    // Only flow one buffer at a time</span><br><span class="line">    <span class="keyword">if</span> (state.flowing &amp;&amp; state.length)//流动模式并且存在length</span><br><span class="line">      <span class="built_in">return</span> state.buffer.head.data.length;//返回bufferList头部数据</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">      <span class="built_in">return</span> state.length;//否则返回缓存区大小</span><br><span class="line">  &#125;</span><br><span class="line">  // If we<span class="string">'re asking for more than the current hwm, then raise the hwm.</span></span><br><span class="line"><span class="string">  if (n &gt; state.highWaterMark)//如果n大于highWaterMark</span></span><br><span class="line"><span class="string">    state.highWaterMark = computeNewHighWaterMark(n);//highWaterMark为computeNewHighWaterMark返回值，如下</span></span><br><span class="line"><span class="string">  if (n &lt;= state.length)</span></span><br><span class="line"><span class="string">    return n;//如果n小于缓存区长度返回n</span></span><br><span class="line"><span class="string">  // Don'</span>t have enough</span><br><span class="line">  <span class="keyword">if</span> (!state.ended) &#123;//如果读取没有结束，则需要Readable返回0</span><br><span class="line">    state.needReadable = <span class="literal">true</span>;</span><br><span class="line">    <span class="built_in">return</span> 0;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">return</span> state.length;//最后返回缓存区长度</span><br><span class="line">&#125;</span><br><span class="line">// Don<span class="string">'t raise the hwm &gt; 8MB</span></span><br><span class="line"><span class="string">const MAX_HWM = 0x800000;</span></span><br><span class="line"><span class="string">function computeNewHighWaterMark(n) &#123;</span></span><br><span class="line"><span class="string">  if (n &gt;= MAX_HWM) &#123;//如果n大于等于8M，则返回最大值8M，否则</span></span><br><span class="line"><span class="string">    n = MAX_HWM;</span></span><br><span class="line"><span class="string">  &#125; else &#123;</span></span><br><span class="line"><span class="string">    // Get the next highest power of 2 to prevent increasing hwm excessively in</span></span><br><span class="line"><span class="string">    // tiny amounts</span></span><br><span class="line"><span class="string">    n--;</span></span><br><span class="line"><span class="string">    n |= n &gt;&gt;&gt; 1;</span></span><br><span class="line"><span class="string">    n |= n &gt;&gt;&gt; 2;</span></span><br><span class="line"><span class="string">    n |= n &gt;&gt;&gt; 4;</span></span><br><span class="line"><span class="string">    n |= n &gt;&gt;&gt; 8;</span></span><br><span class="line"><span class="string">    n |= n &gt;&gt;&gt; 16;</span></span><br><span class="line"><span class="string">    n++;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">  return n;//返回n的二进制形式</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">//fromList —— 974行</span></span><br><span class="line"><span class="string">function fromList(n, state) &#123;</span></span><br><span class="line"><span class="string">  // nothing buffered</span></span><br><span class="line"><span class="string">  if (state.length === 0)</span></span><br><span class="line"><span class="string">    return null;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  var ret;</span></span><br><span class="line"><span class="string">  if (state.objectMode)</span></span><br><span class="line"><span class="string">    ret = state.buffer.shift();//如果是对象流，则ret等于第一个buffer</span></span><br><span class="line"><span class="string">  else if (!n || n &gt;= state.length) &#123;//如果n不存在或者n大于缓存区长度</span></span><br><span class="line"><span class="string">    // read it all, truncate the list</span></span><br><span class="line"><span class="string">    if (state.decoder)//如果解码存在</span></span><br><span class="line"><span class="string">      ret = state.buffer.join('</span><span class="string">');//将buffer拼接为数组</span></span><br><span class="line"><span class="string">    else if (state.buffer.length === 1)</span></span><br><span class="line"><span class="string">      ret = state.buffer.head.data;//如果buffer.length为1，则拿去bufferList头部数据</span></span><br><span class="line"><span class="string">    else</span></span><br><span class="line"><span class="string">      ret = state.buffer.concat(state.length);//否则将缓存区合并</span></span><br><span class="line"><span class="string">    state.buffer.clear();//清空buffer</span></span><br><span class="line"><span class="string">  &#125; else &#123;</span></span><br><span class="line"><span class="string">    // read part of list</span></span><br><span class="line"><span class="string">    ret = fromListPartial(n, state.buffer, state.decoder);//调用fromListPartial，如下</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  return ret;返回ret</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">function fromListPartial(n, list, hasStrings) &#123;</span></span><br><span class="line"><span class="string">  var ret;</span></span><br><span class="line"><span class="string">  if (n &lt; list.head.data.length) &#123;//如果n小于bufferlist头部data的长度</span></span><br><span class="line"><span class="string">    // slice is the same for buffers and strings</span></span><br><span class="line"><span class="string">    ret = list.head.data.slice(0, n);//截取bufferList0-n数量</span></span><br><span class="line"><span class="string">    list.head.data = list.head.data.slice(n);//从新赋值bufferlist为n以后的</span></span><br><span class="line"><span class="string">  &#125; else if (n === list.head.data.length) &#123;</span></span><br><span class="line"><span class="string">    // first chunk is a perfect match</span></span><br><span class="line"><span class="string">    ret = list.shift();//如果n等于bufferlist头部data长度，则ret等于bufferList的第一个数据包括head data</span></span><br><span class="line"><span class="string">  &#125; else &#123;</span></span><br><span class="line"><span class="string">    // result spans more than one buffer</span></span><br><span class="line"><span class="string">    //如果n大于bufferList头部data长度，则判断state.decoder解码类型，字符串调用copyFromBufferString，buffer调用copyFromBuffer</span></span><br><span class="line"><span class="string">    ret = hasStrings ? copyFromBufferString(n, list) : copyFromBuffer(n, list);</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">  return ret;//返回ret</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">function copyFromBufferString(n, list) &#123;</span></span><br><span class="line"><span class="string">  var p = list.head;//p为bufferList的头部</span></span><br><span class="line"><span class="string">  var c = 1;</span></span><br><span class="line"><span class="string">  var ret = p.data;//ret为头部data</span></span><br><span class="line"><span class="string">  n -= ret.length;//n减去data长度</span></span><br><span class="line"><span class="string">  while (p = p.next) &#123;</span></span><br><span class="line"><span class="string">    const str = p.data;</span></span><br><span class="line"><span class="string">    const nb = (n &gt; str.length ? str.length : n);//如果n大于bufferList头部data长度，则n等于data长度否则为n</span></span><br><span class="line"><span class="string">    if (nb === str.length)</span></span><br><span class="line"><span class="string">      ret += str;//如果nb等于bufferList头部data长度，则ret加等于bufferList头部data</span></span><br><span class="line"><span class="string">    else</span></span><br><span class="line"><span class="string">      ret += str.slice(0, n);//否则加等于从0-n截取的头部data</span></span><br><span class="line"><span class="string">    n -= nb;</span></span><br><span class="line"><span class="string">    if (n === 0) &#123;</span></span><br><span class="line"><span class="string">      if (nb === str.length) &#123;</span></span><br><span class="line"><span class="string">        ++c;</span></span><br><span class="line"><span class="string">        if (p.next)</span></span><br><span class="line"><span class="string">          list.head = p.next;</span></span><br><span class="line"><span class="string">        else</span></span><br><span class="line"><span class="string">          list.head = list.tail = null;</span></span><br><span class="line"><span class="string">      &#125; else &#123;</span></span><br><span class="line"><span class="string">        list.head = p;</span></span><br><span class="line"><span class="string">        p.data = str.slice(nb);</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">      break;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">    ++c;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">  list.length -= c;</span></span><br><span class="line"><span class="string">  return ret;//返回ret</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">function copyFromBuffer(n, list) &#123;</span></span><br><span class="line"><span class="string">  const ret = Buffer.allocUnsafe(n);//创建一个n长度的buffer</span></span><br><span class="line"><span class="string">  var p = list.head;</span></span><br><span class="line"><span class="string">  var c = 1;</span></span><br><span class="line"><span class="string">  p.data.copy(ret);</span></span><br><span class="line"><span class="string">  n -= p.data.length;</span></span><br><span class="line"><span class="string">  while (p = p.next) &#123;</span></span><br><span class="line"><span class="string">    const buf = p.data;</span></span><br><span class="line"><span class="string">    const nb = (n &gt; buf.length ? buf.length : n);</span></span><br><span class="line"><span class="string">    buf.copy(ret, ret.length - n, 0, nb);</span></span><br><span class="line"><span class="string">    n -= nb;</span></span><br><span class="line"><span class="string">    if (n === 0) &#123;</span></span><br><span class="line"><span class="string">      if (nb === buf.length) &#123;</span></span><br><span class="line"><span class="string">        ++c;</span></span><br><span class="line"><span class="string">        if (p.next)</span></span><br><span class="line"><span class="string">          list.head = p.next;</span></span><br><span class="line"><span class="string">        else</span></span><br><span class="line"><span class="string">          list.head = list.tail = null;</span></span><br><span class="line"><span class="string">      &#125; else &#123;</span></span><br><span class="line"><span class="string">        list.head = p;</span></span><br><span class="line"><span class="string">        p.data = buf.slice(nb);</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">      break;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">    ++c;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">  list.length -= c;</span></span><br><span class="line"><span class="string">  return ret;</span></span><br><span class="line"><span class="string">&#125;</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Fs.js文件</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line">// _read —— 2064行</span><br><span class="line">const kMinPoolSpace = 128;</span><br><span class="line">ReadStream.prototype._read = <span class="keyword">function</span>(n) &#123;</span><br><span class="line">  <span class="keyword">if</span> (typeof this.fd !== <span class="string">'number'</span>) &#123;//如果文件没打开，则监听一次open等待触发调用_read(n)</span><br><span class="line">    <span class="built_in">return</span> this.once(<span class="string">'open'</span>, <span class="function"><span class="title">function</span></span>() &#123;</span><br><span class="line">      this._read(n);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (this.destroyed)//如果关闭，直接停止执行代码</span><br><span class="line">    <span class="built_in">return</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (!pool || pool.length - pool.used &lt; kMinPoolSpace) &#123;</span><br><span class="line">    // discard the old pool.</span><br><span class="line">    //如果pool不存在，或者pool长度减去pool.used小于kMinPoolSpace，则调用allocNewPool，传入readableHighWaterMark，pool就是要真正读取的长度</span><br><span class="line">    allocNewPool(this.readableHighWaterMark);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  // Grab another reference to the pool <span class="keyword">in</span> the <span class="keyword">case</span> that <span class="keyword">while</span> we<span class="string">'re</span></span><br><span class="line"><span class="string">  // in the thread pool another read() finishes up the pool, and</span></span><br><span class="line"><span class="string">  // allocates a new one.</span></span><br><span class="line"><span class="string">  var thisPool = pool;//thisPool为pool</span></span><br><span class="line"><span class="string">  var toRead = Math.min(pool.length - pool.used, n);//取最小，比较真正读取的长度和传入n长度</span></span><br><span class="line"><span class="string">  var start = pool.used;//start为used</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  if (this.pos !== undefined)//如果开始读取位置不存在，则toRead为结束减去开始+1，和上面toRead取最小</span></span><br><span class="line"><span class="string">    toRead = Math.min(this.end - this.pos + 1, toRead);</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  // already read everything we were supposed to read!</span></span><br><span class="line"><span class="string">  // treat as EOF.</span></span><br><span class="line"><span class="string">  if (toRead &lt;= 0)</span></span><br><span class="line"><span class="string">    return this.push(null);//缓存区加入null</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  // the actual read.</span></span><br><span class="line"><span class="string">  //fs.read读取操作fd,数据将被写入到的buffer-pool，pool.used写入偏移量，toRead读取长度</span></span><br><span class="line"><span class="string">  fs.read(this.fd, pool, pool.used, toRead, this.pos, (er, bytesRead) =&gt; &#123;</span></span><br><span class="line"><span class="string">    if (er) &#123;</span></span><br><span class="line"><span class="string">      if (this.autoClose) &#123;</span></span><br><span class="line"><span class="string">        this.destroy();//如果自动关闭为true，调用自动关闭函数，内部触发close</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">      this.emit('</span>error<span class="string">', er);//如果报错，触发error监听</span></span><br><span class="line"><span class="string">    &#125; else &#123;</span></span><br><span class="line"><span class="string">      var b = null;</span></span><br><span class="line"><span class="string">      if (bytesRead &gt; 0) &#123;//如果bytesRead读取长度大于0，this.bytesRead就加等于bytesRead，并且b等于写入缓存区长度的截取从开始位置到读取bytesRead的长度</span></span><br><span class="line"><span class="string">        this.bytesRead += bytesRead;</span></span><br><span class="line"><span class="string">        b = thisPool.slice(start, start + bytesRead);</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">      this.push(b);//将b加入缓存区</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;);</span></span><br><span class="line"><span class="string">    // move the pool positions, and internal position for reading.</span></span><br><span class="line"><span class="string">  if (this.pos !== undefined)//如果开始位置不存在，则pos加等于toRead，并且pool.used加等于toRead</span></span><br><span class="line"><span class="string">    this.pos += toRead;</span></span><br><span class="line"><span class="string">  pool.used += toRead;</span></span><br><span class="line"><span class="string">&#125;;</span></span><br><span class="line"><span class="string">var pool;//1969行</span></span><br><span class="line"><span class="string">function allocNewPool(poolSize) &#123;</span></span><br><span class="line"><span class="string">  pool = Buffer.allocUnsafe(poolSize);//设置pool的buffer大小</span></span><br><span class="line"><span class="string">  pool.used = 0;</span></span><br><span class="line"><span class="string">&#125;</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/node/" rel="tag"># node</a>
+          
+            <a href="/tags/stream/" rel="tag"># stream</a>
+          
+            <a href="/tags/fs/" rel="tag"># fs</a>
+          
+            <a href="/tags/Readable/" rel="tag"># Readable</a>
+          
+            <a href="/tags/Writable/" rel="tag"># Writable</a>
+          
+            <a href="/tags/Duplex/" rel="tag"># Duplex</a>
+          
+            <a href="/tags/Transform/" rel="tag"># Transform</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/16/javascript/eventLoop/" rel="next" title="Javascript 运行机制详解，Event Loop">
+                <i class="fa fa-chevron-left"></i> Javascript 运行机制详解，Event Loop
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="https://avatars2.githubusercontent.com/u/23302677?s=460&v=4"
+               alt="魏燃" />
+          <p class="site-author-name" itemprop="name">魏燃</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">28</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#node-stream源码分析-—-Readable"><span class="nav-number">1.</span> <span class="nav-text">node stream源码分析 — Readable</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#stream简述"><span class="nav-number">1.1.</span> <span class="nav-text">stream简述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#stream分为四种，如下："><span class="nav-number">1.1.1.</span> <span class="nav-text">stream分为四种，如下：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#流拥有两种模式"><span class="nav-number">1.1.2.</span> <span class="nav-text">流拥有两种模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#输入流（stream-Readable）"><span class="nav-number">1.1.3.</span> <span class="nav-text">输入流（stream.Readable）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Readable源码分析"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">Readable源码分析</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">魏燃</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
