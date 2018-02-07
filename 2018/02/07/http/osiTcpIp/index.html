@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="OSI,TCP,IP,Http," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="一.OSI七层网络模型—Open System Interconnection   OSI 功能 TCP/IP协议     应用层(Application Layer) 面向计算机用户，提供应用程序和网络之间的接口，向用户提供服务，完成用户希望在网上完成的各种工作 HTTP，HTTPS，FTP，TELNET，SSH，SMTP，POP3等   表示层(Presentation Layer) 处理来自">
+<meta name="keywords" content="OSI,TCP,IP,Http">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OSI&#x2F;TCP&#x2F;IP深入浅出">
+<meta property="og:url" content="http://yoursite.com/2018/02/07/http/osiTcpIp/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="一.OSI七层网络模型—Open System Interconnection   OSI 功能 TCP/IP协议     应用层(Application Layer) 面向计算机用户，提供应用程序和网络之间的接口，向用户提供服务，完成用户希望在网上完成的各种工作 HTTP，HTTPS，FTP，TELNET，SSH，SMTP，POP3等   表示层(Presentation Layer) 处理来自">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2018/02/07/http/osiTcpIp/tcp.jpg">
+<meta property="og:image" content="http://yoursite.com/2018/02/07/http/osiTcpIp/tcpport.png">
+<meta property="og:image" content="http://yoursite.com/2018/02/07/http/osiTcpIp/sequencenumber.jpg">
+<meta property="og:image" content="http://yoursite.com/2018/02/07/http/osiTcpIp/seqpre.png">
+<meta property="og:image" content="http://yoursite.com/2018/02/07/http/osiTcpIp/15.udp.png">
+<meta property="og:image" content="http://yoursite.com/2018/02/07/http/osiTcpIp/20160818160527979.png">
+<meta property="og:updated_time" content="2018-02-07T07:32:31.437Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="OSI&#x2F;TCP&#x2F;IP深入浅出">
+<meta name="twitter:description" content="一.OSI七层网络模型—Open System Interconnection   OSI 功能 TCP/IP协议     应用层(Application Layer) 面向计算机用户，提供应用程序和网络之间的接口，向用户提供服务，完成用户希望在网上完成的各种工作 HTTP，HTTPS，FTP，TELNET，SSH，SMTP，POP3等   表示层(Presentation Layer) 处理来自">
+<meta name="twitter:image" content="http://yoursite.com/2018/02/07/http/osiTcpIp/tcp.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/02/07/http/osiTcpIp/"/>
+
+
+
+
+
+  <title>OSI/TCP/IP深入浅出 | Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/07/http/osiTcpIp/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="魏燃">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://avatars2.githubusercontent.com/u/23302677?s=460&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">OSI/TCP/IP深入浅出</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-07T00:00:00+08:00">
+                2018-02-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/http/" itemprop="url" rel="index">
+                    <span itemprop="name">http</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="一-OSI七层网络模型—Open-System-Interconnection"><a href="#一-OSI七层网络模型—Open-System-Interconnection" class="headerlink" title="一.OSI七层网络模型—Open System Interconnection"></a>一.OSI七层网络模型—Open System Interconnection</h2><table>
+<thead>
+<tr>
+<th style="text-align:center">OSI</th>
+<th style="text-align:center">功能</th>
+<th style="text-align:center">TCP/IP协议</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">应用层(Application Layer)</td>
+<td style="text-align:center">面向计算机用户，提供应用程序和网络之间的接口，向用户提供服务，完成用户希望在网上完成的各种工作</td>
+<td style="text-align:center">HTTP，HTTPS，FTP，TELNET，SSH，SMTP，POP3等</td>
+</tr>
+<tr>
+<td style="text-align:center">表示层(Presentation Layer)</td>
+<td style="text-align:center">处理来自应用层的的命令和数据，对各种语法解释，按照规格传给会话层。处理编码，数据可是转换和加密解密</td>
+<td style="text-align:center">没有协议</td>
+</tr>
+<tr>
+<td style="text-align:center">会话层(Session Layer)</td>
+<td style="text-align:center">用户应用程序和网络之间的接口，向两个实体表示层提供连接和连接方法，不同实体之间的表示层连接叫做会话，因此主要功能是维护和协调会话之间的数据通信</td>
+<td style="text-align:center">没有协议</td>
+</tr>
+<tr>
+<td style="text-align:center">传输层(Transport Layer)</td>
+<td style="text-align:center">为会话层和网络层提供传输服务，从会话层获得数据，在必要时进行分割，然后传送给网络层，主要起到建立，维护和取消传输连接功能，负责两节点的可靠传输</td>
+<td style="text-align:center">TCP、UDP</td>
+</tr>
+<tr>
+<td style="text-align:center">网络层(Network Layer)</td>
+<td style="text-align:center">通过路由算法(两节点之间可能有多条路径)，为报文选择最适当的路径，在网络层数据转换为数据包，通过路径选择等控制，将信息从一个网络设备传送到另一个网络设备</td>
+<td style="text-align:center">IP、ICMP、RIP、OSPF、BGP、IGMP等</td>
+</tr>
+<tr>
+<td style="text-align:center">数据链路层(Data Link Layer)</td>
+<td style="text-align:center">数据链路层的数据传输单元成为帧，就是将网络层转发的数据封装为帧，传输给物理层，以及分析物理层传输过来的数据帧</td>
+<td style="text-align:center">SLIP、CSLIP、PPP、ARP、RARP、MTU等</td>
+</tr>
+<tr>
+<td style="text-align:center">物理层(Physical Layer)</td>
+<td style="text-align:center">为数据链路层提供数据帧和接收数据帧然后管理电脑通信设备和网络媒体之间的互通。包括了针脚、电压、线缆规范、集线器、中继器、网卡、主机适配器等</td>
+<td style="text-align:center">ISO2110等</td>
+</tr>
+</tbody>
+</table>
+<h2 id="二-TCP-IP模型"><a href="#二-TCP-IP模型" class="headerlink" title="二 .TCP/IP模型"></a>二 .TCP/IP模型</h2><table>
+<thead>
+<tr>
+<th style="text-align:center">OSI</th>
+<th style="text-align:center">TCP/IP</th>
+<th style="text-align:center">协议</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">应用层/表示层/会话层</td>
+<td style="text-align:center">应用层</td>
+<td style="text-align:center">HTTP、FTP、TFTP、SMIP、SNMP、DNS</td>
+</tr>
+<tr>
+<td style="text-align:center">传输层</td>
+<td style="text-align:center">传输层</td>
+<td style="text-align:center">TCP、UDP</td>
+</tr>
+<tr>
+<td style="text-align:center">网络层</td>
+<td style="text-align:center">网络层</td>
+<td style="text-align:center">ICMP、IGMP、IP、ARP、RARP</td>
+</tr>
+<tr>
+<td style="text-align:center">数据链路层/物理层</td>
+<td style="text-align:center">网络接口层</td>
+<td style="text-align:center">由底层网络定义协议</td>
+</tr>
+</tbody>
+</table>
+<h2 id="三-TCP-IP分层模型图"><a href="#三-TCP-IP分层模型图" class="headerlink" title="三.TCP/IP分层模型图"></a>三.TCP/IP分层模型图</h2><p><img src="/2018/02/07/http/osiTcpIp/tcp.jpg" alt="u=2021599465,3053942252&amp;fm=27&amp;gp=0"></p>
+<ul>
+<li><p>链路层—网络接口层</p>
+<p>网络接口层是TCP/IP模型的最底层，负责接收从上一层交来的数据报并将数据报通过底层的物理网络发送出去，比较常见的就是设备的驱动程序。ARP（地址解析协议）和RARP（逆地址解析协议）是某些网络接口（如以太网和令牌环网）使用的特殊协议，用来转换IP层和网络接口层使用的地址</p>
+</li>
+<li><p>网络层</p>
+<p>对应OSI网络层，负责数据包装、寻址、路由和交换错误报文。只管传送数据，不管成功与否</p>
+<p>IP网络协议一种不可靠的服务，快速将源节点送到目标节点，被TCP/UDP使用，TCP和UDP的每组数据都通过端系统和每个中间路由器中的IP层在互联网中进行传输。</p>
+</li>
+<li><p>传输层</p>
+<p>位于应用层和网络接口层之间，为两台主机提供端到端的通信，在TCP/IP协议族中，有两个互不相同的传输协议：TCP（传输控制协议）和UDP（用户数据报协议）。</p>
+<p>TCP为两台主机提供高可靠性的数据通信，如图：</p>
+<p><img src="/2018/02/07/http/osiTcpIp/tcpport.png" alt="tcpport"></p>
+<p>TCP首部最小为20字节，这20字节分为5行，每行4个字节也就是32个位。</p>
+<ul>
+<li><p>第一行是源端口号和目标端口号，分别占用16位，也就是端口号最大是2^16，所以端口号的范围是0~65536</p>
+</li>
+<li><p>第二行，第三行分别是32位序列号和32位确认号，在建立连接时，计算机生成一个随机序列号作为初始值，传递给目标，当对方接收完毕之后，接收端会返回一个32位确认应答号是序列号加数据长度，当发送端收到确认应答号后，用来确认这个位置以前所有数据都被正常接收，否则将会从新连接发送</p>
+</li>
+<li><p>第四行主要分为两大部分，左侧16位分别是4位首首部长度，如果没有可选字段，那这里的值就是5，表示TCP首都的长度为20字节，也就是说5行x每行32bit。一位8bit，所以就是5x4=20字节。然后是6位保留用作未来使用，暂时都为0.</p>
+<p>然后是6位控制位，连接，传输和断开都受到这六个控制位的指挥</p>
+<ul>
+<li>URG (urgent紧急)  — 紧急标志位，表示的是此报文段中有紧急数据，将紧急数据排在普通数据的前面；当接受端收到此报文后后必须先处理紧急数据，而后再处理普通数据。 通常用来暂时中断通信</li>
+<li>ACK (acknowledgement确认) — 置1时表示确认号合法，为0表示数据段不包含确认信息，确认号被忽略</li>
+<li>PSH (push推送) — 置1时请求的报文在接收方收到时，会尽快交付接收应用进程，而不在等到整个缓存区都填满后再交付给应用进程</li>
+<li>RST (reset重置) — 置1时重新连接，表示出现错误，需要释放连接，再重新建立连接</li>
+<li>SYN (synchronous同步) — 置1时连接请求或同意报文，当SYN=1而ACK=0时，表明这是一个连接请求报文段。对方若同意建立连接，则应在响应的报文段中使SYN=1和ACK=1</li>
+<li>FIN (FINis终止) — 释放连接，提出断开连接的一方将FIN置为1表示断开连接 </li>
+</ul>
+<p>然后第二部分是16位窗口大小</p>
+<ul>
+<li>窗口 — 指对于发送报文段一方而言的接收窗口。<br>窗口值 — 则是告诉发送方，从报文段首部的确认号算起，接收方目前允许对方发送的数据量</li>
+</ul>
+</li>
+<li><p>第五行分别为16位校验和、16位紧急指针</p>
+<ul>
+<li>16位校验和 — 发送端计算校验和，接收端进行检验计算和，如果两次校验一致表示数据正确，否则认为数据被破坏，接收端将丢弃该数据，主要用来差错控制</li>
+<li>16位紧急指针 — 当URG置为1时，指向后面优先数据，URG为0时，则无效作为填充，主要用来加快处理标识为URG的紧急数据</li>
+</ul>
+</li>
+<li><p>可选项 — TCP头部长度最多为60字节，所以可选项最多为40字节，在这里不做太多陈述，具体可查阅<a href="http://book.51cto.com/art/201306/400263.htm" target="_blank" rel="noopener">TCP头部选项</a></p>
+</li>
+</ul>
+</li>
+<li><p>应用层</p>
+<p>应用层是我们经常接触使用的部分，比如常用的http协议、ftp协议(文件传输协议)、snmp(网络管理协议)、telnet(远程登录协议)、smtp(简单邮件传输协议)、dns(域名解析)，主要是面向用户的交互的。这里的应用层集成了osi分层模型中 的应用、表示、会话层三层的功能。</p>
+</li>
+</ul>
+<h3 id="TCP三次握手，四次挥手"><a href="#TCP三次握手，四次挥手" class="headerlink" title="TCP三次握手，四次挥手"></a>TCP三次握手，四次挥手</h3><ul>
+<li>TCP是面向连接的协议，它在源点和终点之间建立虚拟连接，而不是物理连接</li>
+<li>在数据通信之前，发送端与接收端要先建立连接，等数据发送结束后，双方再断开连接</li>
+<li>TCP连接的每一方都是由一个IP地址和一个端口组成</li>
+</ul>
+<p><img src="/2018/02/07/http/osiTcpIp/sequencenumber.jpg" alt="TCP连接图"></p>
+<ul>
+<li>首先建立连接，客户端连接服务端，发送32位序列号seq=x，并且SYN置1，服务端监听客户端发送的序列号，然后发送32位确认响应swq=y和ack=x+1，并将SYN、ACK置1，然后客户端接收以后，说明服务端接收成功，然后再返回ack=y+1，表示客户端已经接收成功可以开始连接</li>
+<li>当需要断开数据的时候，客户端发送序列号seq=x+2，确认号ack=y+1，并FIN置1，服务端接收以后，返回ack=x+3，并ACK置1，如果有数据没有传送完毕，等待传送完毕返回序列号seq=y+1也就是返回确认号，并FIN置1，如果没有数据则合并ack=x+3，seq=y+1 FIN置1，最后客户端接收以后返回给服务端确认号ack=y+2来确认断开</li>
+</ul>
+<h3 id="抓包"><a href="#抓包" class="headerlink" title="抓包"></a>抓包</h3><ul>
+<li><p>Window用科来网络分析系统，如图</p>
+<p><img src="/2018/02/07/http/osiTcpIp/seqpre.png" alt="TCP抓包"></p>
+<ul>
+<li>如图所示三次握手，第一次客户端发送seq序列号，ACK置0，SYN置1。然后服务端收到序列号后发送列号seq，确认号ack为客户端序列号+1，且SYN、ACK置1，然后客户端接收以后发送序列号为服务端的ack确认号，并发送确认号为服务端序列号+1，且ACK置1</li>
+<li>如图所示四次挥手变三次挥手，因为没有数据需要等待传输，首先客户端发送序列号为服务端在握手中发送的确认号，确认号为服务端发送的序列号+1，且ACK、FIN置1，当服务端收到以后开始发送给客户端，序列号为客户端发送的确认号，确认号为客户端发送的序列号+1，且ACK、FIN置1，当客户端收到以后再发送给服务端，序列号为服务端发的确认号，确认号为服务端发送的序列号+1，且ACK置1，结束连接</li>
+</ul>
+</li>
+<li><p>Mac用WireShark</p>
+<p>WireShark主要用于抓包，在这里我们需要用wireshark查看tcp的三次握手和4次挥手，具体请查看<a href="https://www.cnblogs.com/TankXiao/archive/2012/10/10/2711777.html" target="_blank" rel="noopener">WireShark教程</a></p>
+</li>
+</ul>
+<h2 id="UDP则为应用层提供一种非常简单的服务，如图："><a href="#UDP则为应用层提供一种非常简单的服务，如图：" class="headerlink" title="UDP则为应用层提供一种非常简单的服务，如图："></a>UDP则为应用层提供一种非常简单的服务，如图：</h2><ul>
+<li>UDP是一个无连接、不保证可靠性的传输层协议，也就是说发送端不关心发送的数据是否到达目标主机、数据是否出错等，收到数据的主机也不会告诉 发送方是否收到了数据，它的可靠性由上层协议来保障</li>
+<li>首部结构简单，在数据传输时能实现最小的开销，如果进程想发送很短的报文而对可靠性要求不高可以使用</li>
+</ul>
+<p><img src="/2018/02/07/http/osiTcpIp/15.udp.png" alt="UDP"></p>
+<ul>
+<li>16位源端口号和16位目标端口号和TCP一样</li>
+<li>16位UDP长度代表数据长度</li>
+<li>16位UDP校验和，用于差错控制</li>
+<li>主要应用于QQ、视频软件、TFTP 简单文件传输协议(短信)</li>
+</ul>
+<h2 id="三-应用交互举例"><a href="#三-应用交互举例" class="headerlink" title="三.应用交互举例"></a>三.应用交互举例</h2><p><img src="/2018/02/07/http/osiTcpIp/20160818160527979.png" alt="应用交互图"></p>
+<h3 id="四-参考"><a href="#四-参考" class="headerlink" title="四.参考"></a>四.参考</h3><ul>
+<li><a href="http://blog.csdn.net/be_happy_mr_li/article/details/52243006" target="_blank" rel="noopener">TCP/IP分层模型</a></li>
+<li><a href="https://zh.wikipedia.org/wiki/OSI%E6%A8%A1%E5%9E%8B" target="_blank" rel="noopener">TCP/IP维基</a></li>
+<li><a href="http://blog.csdn.net/yaopeng_2005/article/details/7064869" target="_blank" rel="noopener">OSI七层模型详解</a></li>
+</ul>
+<h3 id="五-博客"><a href="#五-博客" class="headerlink" title="五.博客"></a>五.博客</h3><p><a href="http://www.ngaiwe.com" target="_blank" rel="noopener">魏燃技术博客</a></p>
+<p>有任何问题可留言或者发送本人邮箱ngaiwe@126.com</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/OSI/" rel="tag"># OSI</a>
+          
+            <a href="/tags/TCP/" rel="tag"># TCP</a>
+          
+            <a href="/tags/IP/" rel="tag"># IP</a>
+          
+            <a href="/tags/Http/" rel="tag"># Http</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/02/02/nodejs/stream-Readable/" rel="next" title="node stream源码分析 — Readable">
+                <i class="fa fa-chevron-left"></i> node stream源码分析 — Readable
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="https://avatars2.githubusercontent.com/u/23302677?s=460&v=4"
+               alt="魏燃" />
+          <p class="site-author-name" itemprop="name">魏燃</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">32</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-OSI七层网络模型—Open-System-Interconnection"><span class="nav-number">1.</span> <span class="nav-text">一.OSI七层网络模型—Open System Interconnection</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-TCP-IP模型"><span class="nav-number">2.</span> <span class="nav-text">二 .TCP/IP模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三-TCP-IP分层模型图"><span class="nav-number">3.</span> <span class="nav-text">三.TCP/IP分层模型图</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP三次握手，四次挥手"><span class="nav-number">3.1.</span> <span class="nav-text">TCP三次握手，四次挥手</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#抓包"><span class="nav-number">3.2.</span> <span class="nav-text">抓包</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UDP则为应用层提供一种非常简单的服务，如图："><span class="nav-number">4.</span> <span class="nav-text">UDP则为应用层提供一种非常简单的服务，如图：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三-应用交互举例"><span class="nav-number">5.</span> <span class="nav-text">三.应用交互举例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#四-参考"><span class="nav-number">5.1.</span> <span class="nav-text">四.参考</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#五-博客"><span class="nav-number">5.2.</span> <span class="nav-text">五.博客</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">魏燃</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
