@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="css,高级," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="CSS揭秘—摘要 写这篇文章主要原因是帮助爱看书爱学习而又嫌书中长篇大论太多从而不能坚持看完的码农们做的精华摘要，并且也帮助自己做一个知识存储。 此文章不包含《CSS揭秘》全部内容，只做摘要，提取出工作常用场景，如果想了解更多全面内容推荐阅读此书。  简介 这本书主要针对中高级进阶的CSS开发者，认识更多特性和掌握更多好的方法，当然书中内容不乏简单对于中高级CSS开发者，但是我认为一本书只要能学到">
+<meta name="keywords" content="css,高级">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSS高级进阶">
+<meta property="og:url" content="http://yoursite.com/2018/02/12/css/cssSecret/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="CSS揭秘—摘要 写这篇文章主要原因是帮助爱看书爱学习而又嫌书中长篇大论太多从而不能坚持看完的码农们做的精华摘要，并且也帮助自己做一个知识存储。 此文章不包含《CSS揭秘》全部内容，只做摘要，提取出工作常用场景，如果想了解更多全面内容推荐阅读此书。  简介 这本书主要针对中高级进阶的CSS开发者，认识更多特性和掌握更多好的方法，当然书中内容不乏简单对于中高级CSS开发者，但是我认为一本书只要能学到">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2018/02/12/css/cssSecret/cutTriangleOne.png">
+<meta property="og:image" content="http://yoursite.com/2018/02/12/css/cssSecret/cutTriangleTest.png">
+<meta property="og:image" content="http://yoursite.com/2018/02/12/css/cssSecret/cutTriangleTest2.png">
+<meta property="og:image" content="http://yoursite.com/2018/02/12/css/cssSecret/cutTriangleTest3.png">
+<meta property="og:updated_time" content="2018-02-12T09:48:02.901Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CSS高级进阶">
+<meta name="twitter:description" content="CSS揭秘—摘要 写这篇文章主要原因是帮助爱看书爱学习而又嫌书中长篇大论太多从而不能坚持看完的码农们做的精华摘要，并且也帮助自己做一个知识存储。 此文章不包含《CSS揭秘》全部内容，只做摘要，提取出工作常用场景，如果想了解更多全面内容推荐阅读此书。  简介 这本书主要针对中高级进阶的CSS开发者，认识更多特性和掌握更多好的方法，当然书中内容不乏简单对于中高级CSS开发者，但是我认为一本书只要能学到">
+<meta name="twitter:image" content="http://yoursite.com/2018/02/12/css/cssSecret/cutTriangleOne.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/02/12/css/cssSecret/"/>
+
+
+
+
+
+  <title>CSS高级进阶 | Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/12/css/cssSecret/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="魏燃">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://avatars2.githubusercontent.com/u/23302677?s=460&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CSS高级进阶</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-12T00:00:00+08:00">
+                2018-02-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/css/" itemprop="url" rel="index">
+                    <span itemprop="name">css</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="CSS揭秘—摘要"><a href="#CSS揭秘—摘要" class="headerlink" title="CSS揭秘—摘要"></a>CSS揭秘—摘要</h2><blockquote>
+<p>写这篇文章主要原因是帮助爱看书爱学习而又嫌书中长篇大论太多从而不能坚持看完的码农们做的精华摘要，并且也帮助自己做一个知识存储。</p>
+<p>此文章不包含《CSS揭秘》全部内容，只做摘要，提取出工作常用场景，如果想了解更多全面内容推荐阅读此书。</p>
+</blockquote>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><blockquote>
+<p>这本书主要针对中高级进阶的CSS开发者，认识更多特性和掌握更多好的方法，当然书中内容不乏简单对于中高级CSS开发者，但是我认为一本书只要能学到不会的东西也算值了，不能要求他所讲述的面面俱到，私下里还需我们进一步探索。</p>
+</blockquote>
+<h2 id="第二章-背景与边框"><a href="#第二章-背景与边框" class="headerlink" title="第二章 背景与边框"></a>第二章 背景与边框</h2><blockquote>
+<p>第一张引言就不在此诉说了，没什么用，直接干货。</p>
+</blockquote>
+<ol>
+<li><p><strong>RGBA/HSLA</strong></p>
+<ul>
+<li>RGBA:红、绿、蓝、透明度</li>
+<li>HSLA:色调、饱和度、亮度、透明度</li>
+</ul>
+<p>概念模糊可以查看<a href="http://www.css88.com/book/css/values/color/index.htm" target="_blank" rel="noopener">《CSS颜色手册》</a></p>
+</li>
+<li><p><strong>半透明边框</strong></p>
+<blockquote>
+<p>主要用到background-clip来改变背景绘画区域</p>
+</blockquote>
+<p>Background-clip:border-box</p>
+<ul>
+<li>border-box(默认):背景被裁剪到盒子模型范围content+padding+border</li>
+<li>padding-box:背景被剪裁到盒子模型范围content+padding</li>
+<li>Content-box:背景被剪裁到盒子模型范围content</li>
+</ul>
+<p>盒子模型如果概念模糊，可以查看我写的另外一篇文章关于盒子模型的<a href="http://ngaiwe.com/2018/02/11/css/boxModel/" target="_blank" rel="noopener">《盒子模型原理》</a></p>
+<p>具体核心代码如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">border:10px solid hsla(0,0%,100%,.5);</span><br><span class="line">background:white;</span><br><span class="line">background-clip:padding-box;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>多重边框</strong></p>
+<blockquote>
+<p>主要用到box-shadow阴影的第四个属性扩张半径</p>
+</blockquote>
+<p>Box-shadow:none</p>
+<ul>
+<li>none(默认):无阴影</li>
+<li>Length1:第1个长度值用来设置对象的阴影水平偏移值。可以为负值</li>
+<li>Length2:第2个长度值用来设置对象的阴影垂直偏移值。可以为负值</li>
+<li>Length3:如果提供了第3个长度值则用来设置对象的阴影模糊值。不允许负值</li>
+<li>length4:如果提供了第4个长度值则用来设置对象的阴影外延值。可以为负值</li>
+<li>Color:设置对象的阴影的颜色。</li>
+</ul>
+<p>具体核心代码如下：(<font color="red">注意:box-shadow扩张半径是层层叠加，重合部分上一层覆盖下一层。</font>)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">background: yellowgreen;</span><br><span class="line">box-shadow: 0 0 0 10px <span class="comment">#655,</span></span><br><span class="line">            0 0 0 15px deeppink,</span><br><span class="line">            0 0 0 20px pink;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>灵活的背景定位</strong></p>
+<blockquote>
+<p>主要解决css2.1中定位左下角并且距离边框有偏移问题</p>
+</blockquote>
+<p>Background-position:概念模糊查看<a href="http://www.css88.com/book/css/properties/background/background-position.htm" target="_blank" rel="noopener">《Background-position》</a></p>
+<p>具体代码如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">background:url(<span class="string">"./IMG_3789.JPG"</span>) no-repeat <span class="comment">#58a;</span></span><br><span class="line">background-position: right 20px bottom 20px;</span><br></pre></td></tr></table></figure>
+<p>calc()函数可以完美在Background-position中完成上面效果(注意：加减号左右有空格)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">background:url(<span class="string">"./IMG_3789.JPG"</span>) no-repeat <span class="comment">#58a;</span></span><br><span class="line">background-position: calc(100% - 20px) calc(100% - 20px);</span><br></pre></td></tr></table></figure>
+<p>Background-origin:设置Background-position的参考原点，可以让背景图位置从padding、border、content区域显示<a href="http://www.css88.com/book/css/properties/background/background-origin.htm" target="_blank" rel="noopener">《Background-origin》</a></p>
+</li>
+<li><p><strong>连续的图像边框</strong></p>
+<blockquote>
+<p>主要原理是给两个不同背景指定不同的background-clip</p>
+</blockquote>
+<p>代码如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">padding: 10px;</span><br><span class="line">border: 15px solid transparent;</span><br><span class="line">background: </span><br><span class="line">	linear-gradient(white,white),</span><br><span class="line">	url(<span class="string">'./IMG_3789.JPG'</span>);</span><br><span class="line">background-size: cover;</span><br><span class="line">background-clip: </span><br><span class="line">	padding-box,//为linear-gradient(white,white)指定剪裁区域</span><br><span class="line">	border-box;//为url(<span class="string">'./IMG_3789.JPG'</span>)指定剪裁区域</span><br><span class="line">background-origin: border-box;//设置背景坐标起始原点</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>信封效果，起始就是背景用的渐变来代替图片，原理都一样</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">background: </span><br><span class="line">	linear-gradient(white,white),</span><br><span class="line">	repeating-linear-gradient(-45deg,</span><br><span class="line">		red 0,red 12.5%,transparent 0,transparent 25%,</span><br><span class="line">		<span class="comment">#58a 0, #58a 37.5%,transparent 0, transparent 50%);</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="第三章-形状"><a href="#第三章-形状" class="headerlink" title="第三章 形状"></a>第三章 形状</h2><ol>
+<li><p><strong>平行四边形</strong></p>
+<blockquote>
+<p>主要用到skew()变形，但是如果只做shew()其中文字也会同样倾斜，需要伪类</p>
+</blockquote>
+<p> shew():概念模糊查看<a href="http://www.css88.com/book/css/properties/transform/transform.htm" target="_blank" rel="noopener">《transform》</a></p>
+<p> 代码如下：</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">.box&#123;</span><br><span class="line">    position: relative;</span><br><span class="line">    margin: 100px;</span><br><span class="line">    width: 200px;</span><br><span class="line">    height: 100px;</span><br><span class="line">    z-index: 1;</span><br><span class="line">    text-align: center;</span><br><span class="line">    line-height: 100px;</span><br><span class="line">&#125;</span><br><span class="line">.box::before&#123;</span><br><span class="line">    content: <span class="string">''</span>;</span><br><span class="line">    width: 200px;</span><br><span class="line">    height: 100px;</span><br><span class="line">    position: absolute;</span><br><span class="line">    top: 0;</span><br><span class="line">    left: 0;</span><br><span class="line">    z-index: -1;</span><br><span class="line">    background: <span class="comment">#58a;</span></span><br><span class="line">    transform: skewX(-45deg);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>菱形图片</strong></p>
+<blockquote>
+<p>主要是将上面所讲菱形做旋转rotate()，但是仅仅做完旋转会得到一个八边形，因为max-width的宽度100%被解析为.picture盒子的边长，但是我们需要的是让图片最大宽度为对角线的宽度，因为对角线宽度为等腰三角形边长，然后根据勾股定理是正方形边长的√2≈1.414，所以用scale放大1.42倍</p>
+</blockquote>
+<p> 代码如下：</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">//HTML</span><br><span class="line">&lt;div class=<span class="string">"picture"</span>&gt;</span><br><span class="line">    &lt;img src=<span class="string">"./IMG_3789.JPG"</span>&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line"></span><br><span class="line">//CSS</span><br><span class="line">.picture&#123;</span><br><span class="line">    margin: 100px;</span><br><span class="line">    width: 400px;</span><br><span class="line">    transform: rotate(45deg);</span><br><span class="line">    overflow: hidden;</span><br><span class="line">&#125;</span><br><span class="line">.picture &gt; img&#123;</span><br><span class="line">    max-width: 100%;</span><br><span class="line">    transform: rotate(-45deg);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>可以用clip-path方法代替上述方法，但是浏览器兼容存在很大问题，如想了解请查阅<a href="https://developer.mozilla.org/zh-CN/docs/Web/CSS/clip-path" target="_blank" rel="noopener">《clip-path官方说明》</a></p>
+</blockquote>
+</li>
+<li><p><strong>切角效果</strong></p>
+<blockquote>
+<p>要完成如下图所示效果，主要采用万能渐变</p>
+</blockquote>
+<p> <img src="/2018/02/12/css/cssSecret/cutTriangleOne.png" alt="cutTriangleOne"></p>
+<p> Line-gradient:概念模糊查看<a href="http://www.css88.com/book/css/values/image/linear-gradient(" target="_blank" rel="noopener">《Line-gradient》</a>.htm)</p>
+<p> 代码如下:</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">.box&#123;</span><br><span class="line">    width: 500px;</span><br><span class="line">    height: 300px;</span><br><span class="line">    background: <span class="comment">#58a;</span></span><br><span class="line">    background: linear-gradient(-45deg,transparent 15px, <span class="comment">#58a 0)</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>上面用法只针对于一个角，如果需要多个角，首先我们想到的是用两个渐变，如下所示</p>
+</blockquote>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">background: </span><br><span class="line">    linear-gradient(-45deg,transparent 15px, <span class="comment">#58a 0),</span></span><br><span class="line">    linear-gradient(45deg,transparent 15px, <span class="comment">#655 0);</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>但是此方法行不通，因为默认情况下，这两层渐变都会填满整个元素，会相互覆盖。所以我们需要让他们各自缩小，站整个元素一半面积，如下</p>
+</blockquote>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">background: </span><br><span class="line">    linear-gradient(-45deg,transparent 15px, <span class="comment">#58a 0) right,</span></span><br><span class="line">    linear-gradient(45deg,transparent 15px, <span class="comment">#655 0) left;</span></span><br><span class="line">background-size: 50% 100%;</span><br></pre></td></tr></table></figure>
+<p> <img src="/2018/02/12/css/cssSecret/cutTriangleTest.png" alt="cutTriangleTest"></p>
+<blockquote>
+<p>如上图所示，出现了渐变图案平铺了两次，所以我们需要关闭background-repeat</p>
+</blockquote>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">background: </span><br><span class="line">    linear-gradient(-45deg,transparent 15px, <span class="comment">#58a 0) right,</span></span><br><span class="line">    linear-gradient(45deg,transparent 15px, <span class="comment">#655 0) left;</span></span><br><span class="line">background-size: 50% 100%;</span><br><span class="line">background-repeat: no-repeat;</span><br></pre></td></tr></table></figure>
+<p> <img src="/2018/02/12/css/cssSecret/cutTriangleTest2.png" alt="cutTriangleTest2"></p>
+<blockquote>
+<p>根据上图，不难知道如何实现，四个切角，具体代码如下</p>
+</blockquote>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">background: <span class="comment">#58a;</span></span><br><span class="line">background: </span><br><span class="line">    linear-gradient(135deg,transparent 15px, <span class="comment">#58a 0) top left,</span></span><br><span class="line">    linear-gradient(-135deg,transparent 15px, <span class="comment">#58a 0) top right,</span></span><br><span class="line">    linear-gradient(45deg,transparent 15px, <span class="comment">#58a 0) bottom left,</span></span><br><span class="line">    linear-gradient(-45deg,transparent 15px, <span class="comment">#58a 0) bottom right;</span></span><br><span class="line">background-size: 50% 50%;</span><br><span class="line">background-repeat: no-repeat;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>拓展：弧形切角，主要差别是用径向渐变radial-gradient</p>
+</blockquote>
+<p> radial-gradient:概念模糊查看<a href="http://www.css88.com/book/css/values/image/radial-gradient(" target="_blank" rel="noopener">《radial-gradient》</a>.htm)</p>
+<p> 代码如下：</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">background: <span class="comment">#58a;</span></span><br><span class="line">background: </span><br><span class="line">    radial-gradient(circle at top left,transparent 15px, <span class="comment">#58a 0) top left,</span></span><br><span class="line">    radial-gradient(circle at top right,transparent 15px, <span class="comment">#58a 0) top right,</span></span><br><span class="line">    radial-gradient(circle at bottom right,transparent 15px, <span class="comment">#58a 0) bottom right,</span></span><br><span class="line">    radial-gradient(circle at bottom left,transparent 15px, <span class="comment">#58a 0) bottom left;</span></span><br><span class="line">background-size: 50% 50%;</span><br><span class="line">background-repeat: no-repeat;</span><br></pre></td></tr></table></figure>
+<p> <img src="/2018/02/12/css/cssSecret/cutTriangleTest3.png" alt="cutTriangleTest3"></p>
+</li>
+<li><p><strong>梯形标签页</strong></p>
+ <font color="red">未完待续</font>
+
+
+
+
+
+
+
+
+
+
+
+</li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/css/" rel="tag"># css</a>
+          
+            <a href="/tags/高级/" rel="tag"># 高级</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/02/11/css/boxModel/" rel="next" title="盒子模型">
+                <i class="fa fa-chevron-left"></i> 盒子模型
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="https://avatars2.githubusercontent.com/u/23302677?s=460&v=4"
+               alt="魏燃" />
+          <p class="site-author-name" itemprop="name">魏燃</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">36</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#CSS揭秘—摘要"><span class="nav-number">1.</span> <span class="nav-text">CSS揭秘—摘要</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#简介"><span class="nav-number">2.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二章-背景与边框"><span class="nav-number">3.</span> <span class="nav-text">第二章 背景与边框</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三章-形状"><span class="nav-number">4.</span> <span class="nav-text">第三章 形状</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">魏燃</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
